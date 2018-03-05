@@ -1,10 +1,22 @@
 package com.revature.bankProject.admin;
 
-public class Admin {
+import java.io.Serializable;
+
+public class Admin implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3990581332320034457L;
 	private String name;
 	private String userName;
 	private String password;
 	
+	public Admin(String name ,String uName,String password){
+		this.name=name;
+		this.userName=uName;
+		this.password=password;
+		
+	}
 	public String getName() {
 		return name;
 	}

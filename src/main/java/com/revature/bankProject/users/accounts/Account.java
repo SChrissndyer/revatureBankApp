@@ -1,8 +1,13 @@
 package com.revature.bankProject.users.accounts;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Account {
+public class Account implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1168184147635516989L;
 	private int numeber ;
 	private double ammount;
 	private boolean active=false;

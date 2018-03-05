@@ -1,17 +1,27 @@
 package com.revature.bankProject;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.revature.bankProject.users.Users;
-import com.revature.bankProject.users.accounts.Account;
 
-public class App 
+public class App implements Serializable 
 {
 	
-	public static Bank b=new Bank();
-    public static void main( String[] args ){
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3663561198035923325L;
+	public static Bank b;
+    public static void main( String[] args ) throws ClassNotFoundException{
     	
     	//load data here
     	
@@ -19,7 +29,19 @@ public class App
     	
        System.out.println("Hello and Welcome to the BANK!");
        boolean temp= false;
+       try {
+    	   
+           FileInputStream fileIn = new FileInputStream("data.txt");
+           ObjectInputStream in = new ObjectInputStream(fileIn);
+           
+           b=(Bank)in.readObject();
+           in.close();
+           fileIn.close();
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
        while(temp==false) {
+    	   
     	   getFindWitchUser();
     	   
        }
@@ -32,7 +54,7 @@ public class App
     	String userName="";
     	boolean temp =true;
     	while (temp==true) {
-	    	System.out.println("Pleace enter in your User Name ");
+	    	System.out.println("Please enter in your User Name ");
 	    	userName = reader.next();
 	    	temp=b.loginUserName(userName);
 	    	if(temp==true) {
@@ -42,7 +64,7 @@ public class App
     	}
     	temp=true;
     	while (temp==true) {
-	    	System.out.println("Pleace enter in your password ");
+	    	System.out.println("Please enter in your password ");
 	    	String password = reader.next();
 	    	temp=b.loginUserpassword(userName,password);
 	    	
@@ -55,9 +77,68 @@ public class App
     	curentCustomer();
         }
         else {
-        	b.setloggedinU();
+        	
         	System.out.println("user has not been approved yet");
         }
+    	
+    	
+    }
+    public static void logginEmployee() {
+    	Scanner reader = new Scanner(System.in);
+    	String userName="";
+    	boolean temp =true;
+    	while (temp==true) {
+	    	System.out.println("Please enter in your User Name ");
+	    	userName = reader.next();
+	    	temp=b.loginEmployeeName(userName);
+	    	if(temp==true) {
+	    		System.out.println("user not found try again ");
+	    	}
+        
+    	}
+    	temp=true;
+    	while (temp==true) {
+	    	System.out.println("Please enter in your password ");
+	    	String password = reader.next();
+	    	temp=b.loginEmployeepassword(userName,password);
+	    	
+	    	if(temp==true) {
+	    		System.out.println("invalade user name or password");
+	    	}
+    	}
+        //once finished
+         
+        	employee();
+        
+    	
+    }
+    public static void logginAdmin() {
+    	Scanner reader = new Scanner(System.in);
+    	String userName="";
+    	boolean temp =true;
+    	while (temp==true) {
+	    	System.out.println("Please enter in your User Name ");
+	    	userName = reader.next();
+	    	temp=b.loginAdminName(userName);
+	    	if(temp==true) {
+	    		System.out.println("user not found try again ");
+	    	}
+        
+    	}
+    	temp=true;
+    	while (temp==true) {
+	    	System.out.println("Please enter in your password ");
+	    	String password = reader.next();
+	    	temp=b.loginAdminpassword(userName,password);
+	    	
+	    	if(temp==true) {
+	    		System.out.println("invalade user name or password");
+	    	}
+    	}
+        //once finished
+        
+        admin();
+        
     	
     	
     }
@@ -66,7 +147,7 @@ public class App
 	public static void getFindWitchUser() {
     	
     	Scanner reader = new Scanner(System.in);  
-        System.out.println("Pleace select which user you are: ");
+        System.out.println("Please select which user you are: ");
         System.out.println("1: New customer ");
         System.out.println("2: returning customer ");
         System.out.println("3: employee ");
@@ -85,14 +166,24 @@ public class App
         	rightanswer=true;
         	break;
         case "3":
-        	employee();
+        	logginEmployee();
         	rightanswer=true;
         	break;
         case "4":
-        	admin();
+        	logginAdmin();
         	rightanswer=true;
         	break;
         case "5":
+        	try {
+                FileOutputStream fileOut = new FileOutputStream("data.txt");
+                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                out.writeObject(b);
+                
+                out.close();
+                fileOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         	System.exit(0);
         	rightanswer=true;
         	break;
@@ -114,7 +205,7 @@ public class App
     	boolean temp1 = true;
     	while (temp1) {
     		Scanner reader = new Scanner(System.in);  
-            System.out.println("Pleace select your choice: ");
+            System.out.println("Please select your choice: ");
             System.out.println("1: view accounts");
             System.out.println("2: Withdraw");
             System.out.println("3: deposit ");
@@ -287,31 +378,88 @@ public class App
 
 	
 	private static void admin() {
+		boolean rightanswer= false;
+		while(rightanswer==false) {
 		Scanner reader = new Scanner(System.in);  
-        System.out.println("Pleace select your action: ");
+        System.out.println("Please select your action: ");
         System.out.println("1: New customer request  ");
-        System.out.println("2: returning customer info");
+        System.out.println("2: all cusotmer info and accounts  ");
         System.out.println("3: request for linking accounts ");
-        System.out.println("4: quit ");
+        System.out.println("4: add blank account ");
+        System.out.println("5: Changes ");
+        
+        System.out.println("6: quit ");
         String answer = reader.next();
-        boolean rightanswer= false;
+        
         
         switch(answer) {
         case "1":
-        	
-        	rightanswer=true;
+        	while(true) {
+            	System.out.println("please enter the userName to activate  ");
+                String user = reader.next();
+                
+                if( b.loginUserName(user)) {
+                	System.out.println("no user found try again");
+                	
+                }
+                else {
+                	boolean a= appden();
+                	b.approver(user, a);
+                	break;
+                }
+                
+            	}
+                
+            	
         	break;
         case "2":
         	
-        	rightanswer=true;
+        	System.out.println(b.getAllInfo());
         	break;
         case "3":
         	
-        	rightanswer=true;
+        	while(true)
+        	{
+        		System.out.println("which user do you want to Look at for approval ");
+                String uname = reader.next();
+                if (b.loginUserName(uname)) {
+                	System.out.println("not A user");
+                }
+                else {
+                	if(b.hasaccreq(uname)) {
+                		
+                	}
+                	else {
+                		System.out.println("they did not request a join ");
+                		break;
+                	}
+                }
+        		
+        		break;
+        	}
+        	
         	break;
         
         case "4":
-        	
+        	b.addaccount();
+        	break;
+
+        case "5":
+        	while(true)
+        	{
+        		System.out.println("which user do you want to Look at");
+                String uname = reader.next();
+                if (b.loginUserName(uname)) {
+                	System.out.println("not A user");
+                }
+                else {
+                	adminSubMenu(uname);
+                	break;
+                }
+        	}
+        	break;
+        case "6":
+	
         	rightanswer=true;
         	break;
         	
@@ -320,34 +468,196 @@ public class App
         	break;
 
         }
+		}
 		
 	}
 
-	private static void employee() {
+	private static void adminSubMenu(String a) {
+		b.setloggedinU(a);
+		boolean rightanswer= false;
+		while(rightanswer==false) {
 		Scanner reader = new Scanner(System.in);  
-        System.out.println("Pleace select your action: ");
-        System.out.println("1: New customer request  ");
-        System.out.println("2: returning customer info");
-        System.out.println("3: request for linking accounts ");
+        System.out.println("Please select your action: ");
+        System.out.println("1: Withdraw");
+        System.out.println("2: deposit ");
+        System.out.println("3: transfer ");
+        
         System.out.println("4: quit ");
         String answer = reader.next();
-        boolean rightanswer= false;
+        switch(answer) {
+        case "1": 
+        	try {
+        	while(true) {
+        		int pass=0;
+        		
+            	System.out.println("PLease enter amount to withdraw: ");
+            	float amount = reader.nextFloat();
+            	if(amount<0) {
+            		pass=-1;
+            	}
+            	
+            	 
+            	
+            	System.out.println("PLease enter the account to withdraw from: ");
+            	int from = reader.nextInt();
+            	if(b.accountCheck( from)) {
+            		pass=-1;
+            	}
+            	if( pass==0){
+            		if( amount>b.getamount(from)) {
+            			pass=-1;
+            			System.out.println("insufishent funds!");
+            		}
+            		
+            		
+            	}
+            	if(pass==0) {
+            	b.withdraw(amount, from);
+            	break;
+            	}
+        	}
+        	} catch (InputMismatchException e) {
+      		  
+      		  System.out.println("Entered value is not an integer");
+      		}
+        	break;
+        case "2":
+        	try {
+        	while(true) {
+        		int pass=0;
+            	System.out.println("PLease enter amount to deposit: ");
+            	float amount = reader.nextFloat();
+            	if(amount<0) {
+            		pass=-1;
+            	}
+            	 
+            	
+            	System.out.println("PLease enter the account to deposit from: ");
+            	int from = reader.nextInt();
+            	if(b.accountCheck(from)) {
+            		pass=-1;
+            	}
+            	
+            	if(pass==0) {
+            	b.deposit(amount, from);
+            	break;
+            	}
+        	}}catch (InputMismatchException e) {
+        		  
+        		  System.out.println("Entered value is not an integer");
+        		}
+        	
+        	
+        	
+        	break;
+        case "3":
+        	try {
+        	while(true) {
+        		int pass=0;
+            	System.out.println("PLease enter amount to transfer: ");
+            	float amount = reader.nextFloat();
+            	if(amount<0) {
+            		pass=-1;
+            	}
+            	
+            	 
+            	
+            	System.out.println("PLease enter the account to withdraw from: ");
+            	int from = reader.nextInt();
+            	if(b.accountCheck( from)) {
+            		pass=-1;
+            	}
+            	if( pass==0){
+            		if( amount>b.getamount(from)) {
+            			pass=-1;
+            			System.out.println("insufishent funds!");
+            		}
+            	}
+            	System.out.println("PLease enter the account to deposit to: ");
+	            int to = reader.nextInt();
+	            if(b.accountCheck( to)) {
+	            	pass=-1;
+	            	
+	            	}
+            		
+            		
+            	
+            	if(pass==0) {
+            	b.trasnfer(amount, from,to);
+            	break;
+            	}
+        	}}
+        	catch (InputMismatchException e) {
+        
+        		  System.out.println("Entered value is not an integer");
+        		}
+        	
+        	break;
+        case "4":
+        	rightanswer=true;
+        	break;
+        	
+        default:
+        	System.out.println("wrong input plase try again");
+        	break;
+        	
+        }
+		}
+	}
+	
+	
+	private static void employee() {
+		boolean rightanswer= false;
+		while(rightanswer==false) {
+		Scanner reader = new Scanner(System.in);  
+        System.out.println("Please select your action: ");
+        System.out.println("1: New customer request  ");
+        System.out.println("2: returning customer info");
+        System.out.println("3: quit ");
+        String answer = reader.next();
+        
         
         switch(answer) {
         case "1":
         	
-        	rightanswer=true;
+        	while(true) {
+        	System.out.println("please enter the userName to activate  ");
+            String user = reader.next();
+            
+            if( b.loginUserName(user)) {
+            	System.out.println("no user found try again");
+            	
+            }
+            else {
+            	boolean a= appden();
+            	b.approver(user, a);
+            	break;
+            }
+            
+        	}
+            
+        	
         	break;
         case "2":
+        	while(true) {
+        	System.out.println("please enter the userName to view  ");
+            String user = reader.next();
+            
+            if( b.loginUserName(user)) {
+            	System.out.println("no user found try again");
+            	
+            }
+            else {
+            	
+            	System.out.println(b.userInfo(user));
+            	break;
+            }
         	
-        	rightanswer=true;
-        	break;
-        case "3":
-        	
-        	rightanswer=true;
+        	}
         	break;
         
-        case "4":
+        
+        case "3":
         	
         	rightanswer=true;
         	break;
@@ -358,23 +668,23 @@ public class App
 
         }
 		
-		
+		}
 	}
 
 	private static void newCustomer() {
 		Scanner reader = new Scanner(System.in);  
-        System.out.println("Pleace enter in your name: ");
+        System.out.println("Please enter in your name: ");
         String name = reader.next();
-        System.out.println("Pleace enter in your Date of birht MM-DD-YYYY: ");
+        System.out.println("Please enter in your Date of birht MM-DD-YYYY: ");
         String dOB = reader.next();
         String userName="";
         String password="";
         boolean tep=true;
         while(tep==true) {
         
-	        System.out.println("Pleace enter in your user name: ");
+	        System.out.println("Please enter in your user name: ");
 	        userName = reader.next();
-	        System.out.println("Pleace enter in your password: ");
+	        System.out.println("Please enter in your password: ");
 	        password  = reader.next();
 	        boolean inn=false;
 	        inn=b.loginUserName(userName);
@@ -389,6 +699,43 @@ public class App
         
 		
 	}
-
+	public static  boolean appden() {
+		boolean rightanswer= false;
+		boolean re = false;
+		while (rightanswer==false) {
+		Scanner reader = new Scanner(System.in);  
+        System.out.println("Please select your action: ");
+        System.out.println("1: approve  ");
+        System.out.println("2: denie");
+        
+        String answer = reader.next();
+     
+        switch(answer) {
+        case "1":
+        	re=true;
+        	rightanswer=true;
+        	break;
+        case "2":
+        	re=false;
+        	rightanswer=true;
+        	break;
+        
+        	
+        default :
+        	System.out.println("wrong input plase try again");
+        	break;
+		
+        }
+        
+        }return re;
+		}
+	
+	private static String getInput(String prompt) {
+		Scanner reader = new Scanner(System.in); 
+		String answer = reader.next();
+		
+		return answer;
+		
+	}
 	
 }

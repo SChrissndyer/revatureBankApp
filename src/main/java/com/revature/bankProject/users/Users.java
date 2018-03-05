@@ -1,17 +1,22 @@
 package com.revature.bankProject.users;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.revature.bankProject.users.accounts.Account;
 
-public class Users {
+public class Users implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3304309369794438711L;
 	private String name;
 	private String birthDay;
 	private String userName;
 	private String password;
 	private boolean active;
-	private int request;
+	private int request=0;
 
 	private ArrayList<Account> accounts = new ArrayList<Account>();
 	
@@ -21,6 +26,8 @@ public class Users {
 		setUserName(userName);
 		setPassword(password);
 		setActive(active);
+		Account a=new Account(0);
+		accounts.add(a);
 		
 		
 		
