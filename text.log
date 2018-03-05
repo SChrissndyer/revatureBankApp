@@ -1,0 +1,6 @@
+2018-03-61 16:38:00 FATAL root:9 - Fatal log
+2018-03-61 16:38:00 ERROR root:12 - Error log
+2018-03-61 16:38:00 WARN  root:15 - Warn log
+2018-03-61 16:38:00 INFO  root:18 - Info log
+2018-03-61 16:38:00 DEBUG root:21 - Debug log
+2018-03-61 16:38:00 TRACE root:24 - Trace log
