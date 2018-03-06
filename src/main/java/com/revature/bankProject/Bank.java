@@ -297,6 +297,7 @@ public class Bank implements Serializable  {
 				for (Account q: accounts) {
 					if(p.getRequest()==q.getNumeber()) {
 						p.setAccounts(q);
+						p.setRequest(0);
 					}
 				}
 			}

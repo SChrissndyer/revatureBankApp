@@ -57,6 +57,7 @@ public class LoggingUtilTest {
 		u.setAccounts(b);
 		accounts.add(a);accounts.add(b);accounts.add(c);
         users.add(u); users.add(u2);
+        
         bank.setLoggedinU(u);
         bank.setAccounts(accounts);
         bank.setAdmins(admins);
@@ -181,6 +182,105 @@ public class LoggingUtilTest {
 	
 		
 	}
+	@Test
+	public void testgetaccounts() {
+	String s=bank.getaccounts();
+			
+		}
+	@Test
+	public void testwithdraw() {
+	
+		bank.withdraw(100D, bank.getUsers().get(0).getAccounts().get(0).getNumeber());
+			
+		}
+	@Test
+	public void testaccountCheckt() {
+	
+		bank.accountCheck( bank.getUsers().get(0).getAccounts().get(0).getNumeber());
+			
+		}
+	@Test
+	public void testaccountCheckf() {
+	
+		bank.accountCheck(0);
+			
+		}
+	@Test
+	public void testaccountChecksf() {
+	
+		bank.accountChecks(0);
+			
+		}
+	@Test
+	public void testaccountCheckst() {
+	
+		assertFalse(bank.accountChecks( bank.getUsers().get(0).getAccounts().get(1).getNumeber()));
+			
+		}
+	@Test
+	public void testsetRequest() {
+	
+		bank.setRequest(100000);
+		}
+	
+	@Test
+	public void testdeposit() {
+	
+		bank.deposit(100f, bank.getUsers().get(0).getAccounts().get(0).getNumeber());
+			
+		}
+	@Test
+	public void testtrasnfer() {
+	
+		bank.trasnfer(100,bank.getUsers().get(0).getAccounts().get(0).getNumeber(),bank.getUsers().get(0).getAccounts().get(1).getNumeber());
+		}
+	@Test
+	public void testuserInfo() {
+	
+		bank.userInfo("tester1");
+		}
+	@Test
+	public void testgetAllInfo() {
+	
+		String s=bank.getAllInfo();
+		}
+	@Test
+	public void testhasaccreqf() {
+	
+		bank.hasaccreq("tester1");
+		}
+	
+	@Test
+	public void testfindUser() {
+	
+		bank.findUser("tester1");
+		}
+	
+	@Test
+	public void testhasaccreqt() {
+		bank.setloggedinU("tester1");
+		bank.setRequest(100000);
+		
+		bank.hasaccreq("tester1");
+		}
+	@Test
+	public void testhasaccreqf1() {
+		
+		assertFalse(bank.hasaccreq("teste"));
+		}
+	@Test
+	public void testlinker() {
+		bank.addaccount();
+		int a=bank.getAccounts().get(bank.getAccounts().size()-1).getNumeber();
+		bank.findUser("tester1");
+		bank.setRequest(a);
+		bank.linker("tester1");
+		}
+	
+	
+	
+	
+	
 	@Test
 	public void testall() throws FileNotFoundException {
 		System.setIn(new FileInputStream("test.txt"));
