@@ -10,12 +10,17 @@ public class Account implements Serializable {
 	private static final long serialVersionUID = -1168184147635516989L;
 	private int numeber ;
 	private double ammount;
-	private boolean active=false;
+	private int active=0;
 	
 	 public  Account(int ammount) {
 		 this.ammount=ammount;
 		 Random rand = new Random();
 		 setNumeber(rand.nextInt(89999999)+10000000);
+	}
+
+	public Account() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public int getNumeber() {
@@ -34,11 +39,11 @@ public class Account implements Serializable {
 		this.ammount = ammount;
 	}
 
-	public boolean isActive() {
+	public int getActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(int active) {
 		this.active = active;
 	}
 	

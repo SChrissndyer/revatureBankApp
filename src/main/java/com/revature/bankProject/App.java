@@ -20,7 +20,7 @@ public class App implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 3663561198035923325L;
-	public static Bank b;
+	public static Bank b = new Bank();
     public static void main( String[] args ) throws ClassNotFoundException{
     	
     	//load data here
@@ -29,17 +29,7 @@ public class App implements Serializable
     	
        System.out.println("Hello and Welcome to the BANK!");
        boolean temp= false;
-       try {
-    	   
-           FileInputStream fileIn = new FileInputStream("data.txt");
-           ObjectInputStream in = new ObjectInputStream(fileIn);
-           
-           b=(Bank)in.readObject();
-           in.close();
-           fileIn.close();
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
+       b.loadAccountsAll();
        while(temp==false) {
     	   
     	   getFindWitchUser();
@@ -119,6 +109,7 @@ public class App implements Serializable
     	while (temp==true) {
 	    	System.out.println("Please enter in your User Name ");
 	    	userName = reader.next();
+	    
 	    	temp=b.loginAdminName(userName);
 	    	if(temp==true) {
 	    		System.out.println("user not found try again ");
@@ -174,16 +165,7 @@ public class App implements Serializable
         	rightanswer=true;
         	break;
         case "5":
-        	try {
-                FileOutputStream fileOut = new FileOutputStream("data.txt");
-                ObjectOutputStream out = new ObjectOutputStream(fileOut);
-                out.writeObject(b);
-                
-                out.close();
-                fileOut.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        	
         	System.exit(0);
         	rightanswer=true;
         	break;
@@ -343,13 +325,19 @@ public class App implements Serializable
     	            			System.out.println("account not found");
     	            			pass=-1;
     	            		}
-    	            	}else
-    	            	{
-    	            	pass=-1;	
-    	            	System.out.println("this is already your account");
-    	            	}
+    	            		}else
+    	            		{ 
+    	            			pass=-1;	
+    	            			System.out.println("this is already your account");
+    	            		}
     	            	if (pass==0) {
+    	            		
+    	            	if(b.cheackRequest(from)) {
+    	            		System.out.println("You are already requesting account");
+    	            	}
+    	            	else {
     	            	b.setRequest(from);
+    	            	}
     	            	break;
     	            	}
             		}
@@ -382,7 +370,7 @@ public class App implements Serializable
 		while(rightanswer==false) {
 		Scanner reader = new Scanner(System.in);  
         System.out.println("Please select your action: ");
-        System.out.println("1: New customer request  ");
+        System.out.println("1: Customer activate /deactivate");
         System.out.println("2: all cusotmer info and accounts  ");
         System.out.println("3: request for linking accounts ");
         System.out.println("4: add blank account ");
@@ -403,8 +391,19 @@ public class App implements Serializable
                 	
                 }
                 else {
-                	boolean a= appden();
-                	b.approver(user, a);
+                	int a= appden();
+                	if (a==1) {
+                		if(b.findType()) {
+                			b.approver(user, a);
+                			}
+                			else {
+                				b.approver2(user, a);
+                			}
+                    	}
+                    	else {
+                    		b.approver2(user, a);
+                    	}
+                	
                 	break;
                 }
                 
@@ -413,13 +412,14 @@ public class App implements Serializable
             	
         	break;
         case "2":
-        	
+        	b.loadAccountsAll();
         	System.out.println(b.getAllInfo());
         	break;
         case "3":
-        	
+        	try {
         	while(true)
         	{
+        		System.out.println(b.getallapp());
         		System.out.println("which user do you want to Look at for approval ");
                 String uname = reader.next();
                 if (b.loginUserName(uname)) {
@@ -427,6 +427,13 @@ public class App implements Serializable
                 }
                 else {
                 	if(b.hasaccreq(uname)) {
+                		System.out.println("which account? ");
+                        int acc = reader.nextInt();
+                		int a= appden();
+                		
+                		b.addaccountto(uname,acc,a);
+                		
+                		
                 		
                 	}
                 	else {
@@ -436,7 +443,10 @@ public class App implements Serializable
                 }
         		
         		break;
-        	}
+        	}}catch (InputMismatchException e) {
+                
+      		  System.out.println("Entered value is not an integer");
+      		}
         	
         	break;
         
@@ -481,8 +491,9 @@ public class App implements Serializable
         System.out.println("1: Withdraw");
         System.out.println("2: deposit ");
         System.out.println("3: transfer ");
+        System.out.println("4: loggs ");
         
-        System.out.println("4: quit ");
+        System.out.println("5: quit ");
         String answer = reader.next();
         switch(answer) {
         case "1": 
@@ -593,7 +604,26 @@ public class App implements Serializable
         		}
         	
         	break;
+        	
         case "4":
+        	while(true)
+        	{
+        		System.out.println("which user do you want to get loggs for ");
+                String uname = reader.next();
+                if (b.loginUserName(uname)) {
+                	System.out.println("not A user");
+                }
+                else {
+                	System.out.println(b.getlogforuser(uname));
+                	System.out.println(b.getlogforuseracc(uname));
+                	
+                }
+        		
+        		break;
+        	}
+        	break;	
+        	
+        case "5":
         	rightanswer=true;
         	break;
         	
@@ -629,8 +659,18 @@ public class App implements Serializable
             	
             }
             else {
-            	boolean a= appden();
-            	b.approver(user, a);
+            	int a= appden();
+            	if (a==1) {
+            		if(b.findType()) {
+            			b.approver(user, a);
+            			}
+            			else {
+            				b.approver2(user, a);
+            			}
+                	}
+                	else {
+                		b.approver2(user, a);
+                	}
             	break;
             }
             
@@ -675,7 +715,7 @@ public class App implements Serializable
 		Scanner reader = new Scanner(System.in);  
         System.out.println("Please enter in your name: ");
         String name = reader.next();
-        System.out.println("Please enter in your Date of birht MM-DD-YYYY: ");
+        System.out.println("Please enter in your Date of birht DD-MM-YYYY: ");
         String dOB = reader.next();
         String userName="";
         String password="";
@@ -699,9 +739,9 @@ public class App implements Serializable
         
 		
 	}
-	public static  boolean appden() {
+	public static  int appden() {
 		boolean rightanswer= false;
-		boolean re = false;
+		int re = 0;
 		while (rightanswer==false) {
 		Scanner reader = new Scanner(System.in);  
         System.out.println("Please select your action: ");
@@ -712,11 +752,11 @@ public class App implements Serializable
      
         switch(answer) {
         case "1":
-        	re=true;
+        	re=1;
         	rightanswer=true;
         	break;
         case "2":
-        	re=false;
+        	re=0;
         	rightanswer=true;
         	break;
         

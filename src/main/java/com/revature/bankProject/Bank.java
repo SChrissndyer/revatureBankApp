@@ -3,10 +3,20 @@ package com.revature.bankProject;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.revature.bankProject.Application.Application;
 import com.revature.bankProject.admin.Admin;
 import com.revature.bankProject.employee.Employee;
 import com.revature.bankProject.users.Users;
 import com.revature.bankProject.users.accounts.Account;
+import com.revature.dao.AccountDao;
+import com.revature.dao.AccountsDaoImpl;
+import com.revature.dao.AdminDao;
+import com.revature.dao.AdminDaoImpl;
+import com.revature.dao.EmployeeDao;
+import com.revature.dao.EmployeeDaoImpl;
+import com.revature.dao.UsersDao;
+import com.revature.dao.UsersDaoImpl;
+
 
 public class Bank implements Serializable  {
 	
@@ -18,13 +28,36 @@ public class Bank implements Serializable  {
 	private  ArrayList<Users> users = new ArrayList<Users>();
 	private  ArrayList<Employee> employees = new ArrayList<Employee>();
 	private  ArrayList<Admin> admins = new ArrayList<Admin>();
+	private ArrayList<Application> applic=new ArrayList<Application>();
 	public static Users loggedinU;
 	
 	public Bank() {
+		super();
+	}
 		
-        
+	public void loadAccountsAll(){
+		AccountDao ac = new AccountsDaoImpl();
+		this.accounts=ac.retrieveAccountForAdmin();
+		this.applic=ac.retrieveAccountForApp();
+		UsersDao us = new UsersDaoImpl();
+		this.users= us.retrieveAllUser();
+		AdminDao ad = new AdminDaoImpl();
+		this.admins= ad.retrieveAllUser();
+		EmployeeDao add = new EmployeeDaoImpl();
+		this.employees= add.retrieveAllEmployee();
+		
+		
+		for( Users u:users) {
+			
+			u.setAllAccounts(ac.retrieveAccountForUser(u.getUserName()));
+			
+		}
+		
 		
 	}
+        
+		
+	
 	
 	public ArrayList<Account> getAccounts() {
 		return accounts;
@@ -68,8 +101,12 @@ public class Bank implements Serializable  {
 	}
 
 	public void addaccount() {
+		
 		Account c=new Account(0);
 		accounts.add(c);
+		
+		AccountDao us = new AccountsDaoImpl();
+		us.createAccountPreparedStmt(c);
 	}
 	public void setloggedinU(String a) {
 		for(Users p:users) {
@@ -81,7 +118,12 @@ public class Bank implements Serializable  {
 	}
 	public boolean seenActive() {
 		
-		return loggedinU.getActive();
+		if(loggedinU.getActive()==0) {
+		return false;
+		}
+		else {
+			return true;
+		}
 		
 	}
 	public double getamount(int from) {
@@ -111,7 +153,7 @@ public class Bank implements Serializable  {
 		return temp;
 	}
 	
-	public void approver(String s,boolean a) {
+	public void approver(String s,int a) {
 		for(Users m:users) {
 			if(m.getUserName().equals(s)) {
 				loggedinU=m;
@@ -119,6 +161,38 @@ public class Bank implements Serializable  {
 				
 			}}
 		loggedinU.setActive(a);
+		AccountDao acc = new AccountsDaoImpl();
+		Account aplha= new Account();
+		aplha.setAmmount(0);
+		aplha.setActive(1);
+		acc.createAccountPreparedStmt(aplha);
+		UsersDao us = new UsersDaoImpl();
+		us.updateUser(loggedinU);
+		acc.createAccountToCus(acc.getLastMadeAccount(), acc.getcustId(loggedinU));
+		
+	}
+	public boolean findType() {
+		if(loggedinU.getAccounts().isEmpty()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	public void approver2(String s,int a) {
+		for(Users m:users) {
+			if(m.getUserName().equals(s)) {
+				loggedinU=m;
+				
+				
+			}}
+		loggedinU.setActive(a);
+		
+		
+		UsersDao us = new UsersDaoImpl();
+		us.updateUser(loggedinU);
+		
+		
 	}
 	
 	
@@ -178,9 +252,12 @@ public class Bank implements Serializable  {
 	}
 	
 	public String adduser(String name,String dOB,String userName ,String password) {
-		Users u =new Users( name, dOB, userName , password , false);
+		Users u =new Users( name, dOB, userName , password , 0);
         users.add(u);
+        UsersDao us = new UsersDaoImpl();
+        us.createUserPreparedStmt(u);
         return u.getUserName();
+        
 	}
 	
 	public String getaccounts() {
@@ -196,6 +273,8 @@ public class Bank implements Serializable  {
 		for (Account p:temp) {
 			if(p.getNumeber()==from) {
 				p.setAmmount(p.getAmmount()-amount);
+				AccountDao us = new AccountsDaoImpl();
+				us.updateAccount(p);
 			}
 		}
 		
@@ -210,7 +289,8 @@ public class Bank implements Serializable  {
 		return true;
 	}
 	public boolean accountChecks(int from) {
-		
+		AccountDao us = new AccountsDaoImpl();
+		accounts=us.retrieveAccountForAdmin();
 		for (Account m:accounts) {
 			if(m.getNumeber()==from) {
 				return false;
@@ -218,8 +298,32 @@ public class Bank implements Serializable  {
 		}
 		return true;
 	}
+	
+	public boolean cheackRequest(int a) {
+		for(Application i: applic) {
+			if(i.getA()==a && i.getU().equals(loggedinU.getUserName())) {
+				return true;
+			}
+			
+		}
+		return false;
+		
+	}
+	
 	public void setRequest(int a) {
-		loggedinU.setRequest(a);
+		Application p=new Application();
+		for(Account acc: accounts) {
+			if (acc.getNumeber()==a) {
+				p.setA(a);
+			}
+		}
+			
+		p.setU(loggedinU.getUserName());
+		applic.add(p);
+		AccountDao im=new AccountsDaoImpl();
+		im.createAccountrec(p);
+		
+		
 	}
 	
 	public void deposit(float amount, int from) {
@@ -227,6 +331,8 @@ public class Bank implements Serializable  {
 		for (Account p:temp) {
 			if(p.getNumeber()==from) {
 				p.setAmmount(p.getAmmount()+amount);
+				AccountDao us = new AccountsDaoImpl();
+				us.updateAccount(p);
 			}
 		}
 		
@@ -268,6 +374,8 @@ public class Bank implements Serializable  {
 			
 		}
 		s+="And now for all acounts \n \n";
+		AccountDao us = new AccountsDaoImpl();
+		accounts=us.retrieveAccountForAdmin();
 		for (Account b:accounts) {
 			s+=b.getNumeber()+" "+b.getAmmount()+"\n";
 		}
@@ -275,15 +383,11 @@ public class Bank implements Serializable  {
 		
 	}
 	public boolean hasaccreq(String a) {
-		for (Users p:users) {
-			if (p.getUserName().equals(a)){
-				if(p.getRequest()==0) {
-					return false;
-				}
-				else {
-					return true;
-				}
+		for (Application p:applic) {
+			if (p.getU().equals(a)){
+				return true;
 			}
+			
 		}
 		
 		
@@ -298,9 +402,69 @@ public class Bank implements Serializable  {
 					if(p.getRequest()==q.getNumeber()) {
 						p.setAccounts(q);
 						p.setRequest(0);
+						//=======================================================
 					}
 				}
 			}
 		}
+	}
+
+	public void addaccountto(String uname,int acc,int answer) {
+		for(Application m: applic) {
+			if(m.getU().equals(uname)&& m.getA()==acc) {
+				m.setAnswer(answer);
+				AccountDao us = new AccountsDaoImpl();
+				us.updateAccountapp(m);
+				if(answer==1) {
+				for(Users p: users) {
+					if(p.getUserName().equals(uname)) {
+						for(Account a :accounts) {
+							if (p.getRequest()==a.getNumeber()) {
+								p.setAccounts(a);
+								p.setRequest(0);
+							}
+						}
+					}
+						
+						//========================================================
+					}
+				}
+				}
+				
+			}
+	}
+	
+
+	public StringBuffer getlogforuser(String uname) {
+		UsersDao us = new UsersDaoImpl();
+		
+        return us.getUserlogg(uname);
+        
+		
+	}
+	public StringBuffer getlogforuseracc(String uname) {
+		StringBuffer m= new StringBuffer();
+		for(Users a: users) {
+			ArrayList<Account> p = a.getAccounts();
+			if (a.getUserName().equals(uname)) {
+			for (Account aa: p) {
+				
+				UsersDao us = new UsersDaoImpl();
+				
+				m.append(us.getUserlogg2(aa.getNumeber()));
+			}
+			
+			}
+		}
+		return m;
+		
+	}
+	public StringBuffer getallapp() {
+		StringBuffer app= new StringBuffer();
+		for (Application i: applic) {
+			app.append(i.getU()+" "+i.getA()+" "+i.getAnswer()+" \n");
+		}
+		return app;
+		
 	}
 }

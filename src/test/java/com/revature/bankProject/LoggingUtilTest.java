@@ -42,8 +42,8 @@ public class LoggingUtilTest {
 		Users loggedinU;
 		
 
-		Users u =new Users( "Bill", "01-01-1990", "tester1" , "password" , true);
-		Users u2 =new Users( "Bill", "01-01-1990", "tester" , "password" , false);
+		Users u =new Users( "Bill", "01-01-1990", "tester1" , "password" , 1);
+		Users u2 =new Users( "Bill", "01-01-1990", "tester" , "password" , 0);
 		Admin ad=new Admin("bob", "admin1","tester");
 		Employee em=new Employee("bob", "employee1","tester");
 		
@@ -52,7 +52,7 @@ public class LoggingUtilTest {
 		Account a=new Account(5000);
 		Account b=new Account(400);
 		Account c=new Account(100);
-		System.out.println(c.getNumeber());
+		//System.out.println(c.getNumeber());
 		u.setAccounts(a);
 		u.setAccounts(b);
 		accounts.add(a);accounts.add(b);accounts.add(c);
@@ -110,7 +110,7 @@ public class LoggingUtilTest {
 	@Test
 	public void testapprover() {
 		
-		bank.approver("tester",true);
+		bank.approver("tester",1);
 		
 	}
 	

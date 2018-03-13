@@ -10,6 +10,9 @@ public class Employee implements Serializable{
 	private String name;
 	private String userName;
 	private String password;
+	public Employee() {
+		super();
+	}
 	public Employee(String name ,String uName,String password){
 		this.name=name;
 		this.userName=uName;

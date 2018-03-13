@@ -15,12 +15,12 @@ public class Users implements Serializable {
 	private String birthDay;
 	private String userName;
 	private String password;
-	private boolean active;
+	private int active;
 	private int request=0;
 
 	private ArrayList<Account> accounts = new ArrayList<Account>();
 	
-	public Users(String name,String birthDay,String userName ,String password ,boolean active ) {
+	public Users(String name,String birthDay,String userName ,String password ,int active ) {
 		setName(name);
 		setBirthDay(birthDay);
 		setUserName(userName);
@@ -28,12 +28,12 @@ public class Users implements Serializable {
 		setActive(active);
 		Account a=new Account(0);
 		accounts.add(a);
-		
-		
-		
-		
 	}
 	
+	public Users() {
+		super();
+	}
+
 	public int getRequest() {
 		return request;
 	}
@@ -42,11 +42,11 @@ public class Users implements Serializable {
 		this.request = request;
 	}
 
-	public void setActive(boolean in) {
-		active=in;
+	public void setActive(int in) {
+		this.active=in;
 		
 	}
-	public boolean getActive() {
+	public int getActive() {
 		return active;
 		
 	}
@@ -59,11 +59,11 @@ public class Users implements Serializable {
 	}
 
 	public String getBirthDay() {
-		return birthDay;
+		return birthDay.format(birthDay, "DD-MM-YYYY");
 	}
 
 	public void setBirthDay(String birthDay) {
-		this.birthDay = birthDay;
+		this.birthDay = birthDay.format(birthDay, "DD-MM-YYYY");
 	}
 
 	public String getUserName() {
@@ -86,9 +86,14 @@ public class Users implements Serializable {
 	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
-
+	public void setAllAccounts(ArrayList<Account> a) {
+		this.accounts=a;
+	}
+	
 	public void setAccounts(Account a) {
 		this.accounts.add(a);
 	}
+
+	
 
 }

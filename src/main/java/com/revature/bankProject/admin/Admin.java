@@ -17,6 +17,9 @@ public class Admin implements Serializable {
 		this.password=password;
 		
 	}
+	public Admin() {
+		super();
+	}
 	public String getName() {
 		return name;
 	}
